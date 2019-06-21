@@ -9,12 +9,14 @@ import com.xmcc.entity.ProductInfo;
 import com.xmcc.repository.ProductInfoRepository;
 import com.xmcc.service.ProductCategoryService;
 import com.xmcc.service.ProductInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,5 +63,30 @@ public class ProductInfoServiceImpl implements ProductInfoService {
 
         }).collect(Collectors.toList());
         return ResultResponse.success(list);
+    }
+
+    @Override
+    public ResultResponse<ProductInfo> queryById(String productId) {
+        //判断字符串是否为空
+        if(StringUtils.isBlank(productId)){
+            return  ResultResponse.fail(ResultEnums.PARAM_ERROR.getMsg());
+        }
+        Optional<ProductInfo> byId = productInfoRepository.findById(productId);
+        if(!byId.isPresent()){
+            return ResultResponse.fail(productId+":"+ResultEnums.NOT_EXITS.getMsg());
+        }
+        ProductInfo product = byId.get();
+        //判断商品是否为下架商品
+        if(product.getProductStatus()==ResultEnums.PRODUCT_DOWN.getCode()){
+            return ResultResponse.fail(ResultEnums.PRODUCT_DOWN.getMsg());
+        }
+        return ResultResponse.success(product);
+    }
+
+    @Override
+    @Transactional
+    public void updateProduct(ProductInfo productInfo) {
+
+        productInfoRepository.save(productInfo);
     }
 }
