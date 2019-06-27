@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -44,4 +45,7 @@ public class OrderDetail implements Serializable {
 
     /** 商品小图. */
     private String productIcon;
+    /** 商品图片 */
+    @Transient
+    private String productImage;
 }

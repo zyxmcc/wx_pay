@@ -1,8 +1,10 @@
 package com.xmcc.controller;
 
 import com.google.common.collect.Maps;
+import com.lly835.bestpay.rest.type.Post;
 import com.xmcc.common.ResultResponse;
 import com.xmcc.dto.OrderMasterDto;
+import com.xmcc.service.OrderDetailService;
 import com.xmcc.service.OrderMasterService;
 import com.xmcc.util.JsonUtil;
 import io.swagger.annotations.Api;
@@ -10,9 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,6 +26,8 @@ public class OrderMasterController {
 
     @Autowired
     private OrderMasterService orderMasterService;
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @PostMapping("create")
     @ApiOperation(value = "创建订单接口", httpMethod = "POST", response =ResultResponse.class)
@@ -43,4 +45,26 @@ public class OrderMasterController {
         }
         return orderMasterService.insetOrder(orderMasterDto);
     }
+
+    @GetMapping("list")
+    @ApiOperation(value = "订单列表分页接口", httpMethod = "GET", response =ResultResponse.class)
+    public ResultResponse list(String openId,Integer page,Integer size){
+        return orderMasterService.queryList(openId, page, size);
+    }
+
+    @GetMapping("detail")
+    @ApiOperation(value = "根据订单id和openId查询订单详情", httpMethod = "GET", response =ResultResponse.class)
+    public ResultResponse detail(@RequestParam(value = "openid",required = true) String openId,
+                                 @RequestParam(value = "orderId",required = true)String orderId){
+        return orderDetailService.queryByOrderIdWithOrderMaster(openId,orderId);
+    }
+
+    //取消订单
+    @PostMapping("cancel")
+    @ApiOperation(value = "取消订单", httpMethod = "POST", response =ResultResponse.class)
+    public ResultResponse cancel(@RequestParam(value = "openid",required = true) String openId,
+                                 @RequestParam(value = "orderId",required = true)String orderId){
+        return orderMasterService.canelOrder(openId,orderId);
+    }
+
 }

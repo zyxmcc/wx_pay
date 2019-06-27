@@ -1,8 +1,9 @@
 package com.xmcc.repository;
 
 import com.xmcc.entity.ProductInfo;
-import io.swagger.models.auth.In;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -16,4 +17,9 @@ public interface ProductInfoRepository extends JpaRepository<ProductInfo,String>
      * @return
      */
     List<ProductInfo> findByProductStatusAndCategoryTypeIn(Integer status, List<Integer> categoryList);
+
+    //当前的俩个注解适用于自定义sql语句 需在调用的地方添加事务 nativeQuery表示适用sql语句
+    @Modifying
+    @Query(value = "update product_info set product_stock=product_stock+?1 where product_id=?2",nativeQuery = true)
+    int saveProductStock(Integer productQuantity,String productId);
 }

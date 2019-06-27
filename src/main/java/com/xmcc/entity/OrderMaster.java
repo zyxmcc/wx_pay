@@ -11,8 +11,10 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单表
@@ -55,4 +57,7 @@ public class OrderMaster {
 
     /** 更新时间. */
     private Date updateTime;
+    //订单详细列表
+    @Transient //当属性并非数据库表的字段映射,就务必将其标示为@Transient
+    private List<OrderDetail> orderDetailList;
 }
