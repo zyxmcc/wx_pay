@@ -60,6 +60,7 @@ public class OrderMasterController {
     }
 
     //取消订单
+    //订单取消时退款
     @PostMapping("cancel")
     @ApiOperation(value = "取消订单", httpMethod = "POST", response =ResultResponse.class)
     public ResultResponse cancel(@RequestParam(value = "openid",required = true) String openId,
